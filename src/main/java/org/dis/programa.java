@@ -21,7 +21,7 @@ public class programa {
     public static void mostrarActores(String titulo,Videoteca[] videotecas){
         for(Videoteca videoteca : videotecas) {
                 for(Pelicula pelicula : videoteca.getPeliculas().getPelicula())
-                    if(pelicula.getTitulo().equals(titulo)){
+                    if(pelicula.getTitulo().equals(titulo)) {
                         System.out.println(pelicula.getReparto());
                         return;
                     }
