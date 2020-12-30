@@ -1,0 +1,17 @@
+<?xml encoding="UTF-8"?>
+<!ELEMENT videoteca (nombre,ubicacion,fecha_actualizacion,peliculas)+>
+<!ELEMENT nombre (#PCDATA)>
+<!ELEMENT ubicacion (#PCDATA )>
+<!ELEMENT fecha_actualizacion (#PCDATA)>
+<!ELEMENT peliculas (pelicula)+>
+
+<!ELEMENT pelicula (titulo,sinopsis,genero?,enlace,reparto)+>
+<!ATTLIST pelicula agno CDATA #IMPLIED duracion CDATA #IMPLIED>
+<!ELEMENT titulo (#PCDATA)>
+<!ELEMENT sinopsis (#PCDATA)>
+<!ELEMENT genero (#PCDATA)>
+<!ELEMENT enlace (#PCDATA)>
+<!ELEMENT reparto (actor)+>
+
+<!ELEMENT actor (nombre,enlaceWikipedia)+>
+<!ELEMENT enlaceWikipedia (#PCDATA)>
