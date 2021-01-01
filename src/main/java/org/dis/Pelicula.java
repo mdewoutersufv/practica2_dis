@@ -12,10 +12,10 @@ public class Pelicula {
     private String enlace;
     private int agno;
     private int duracion;
-    private Reparto reparto;
+    private List<Actor> reparto;
 
 
-    public Pelicula(String titulo, String sinopsis, String genero, String enlace, int agno, int duracion, Reparto reparto) {
+    public Pelicula(String titulo, String sinopsis, String genero, String enlace, int agno, int duracion, List<Actor> reparto) {
         this.titulo = titulo;
         this.sinopsis = sinopsis;
         this.genero = genero;
@@ -25,7 +25,7 @@ public class Pelicula {
         this.reparto = reparto;
     }
 
-    public Pelicula(String titulo, String sinopsis, String enlace, int agno, int duracion, Reparto reparto) {
+    public Pelicula(String titulo, String sinopsis, String enlace, int agno, int duracion, List<Actor> reparto) {
         this.titulo = titulo;
         this.sinopsis = sinopsis;
         this.genero = null;
@@ -43,7 +43,7 @@ public class Pelicula {
         return genero;
     }
 
-    public Reparto getReparto() {
+    public List<Actor> getReparto() {
         return reparto;
     }
 

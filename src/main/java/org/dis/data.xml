@@ -4,7 +4,7 @@
 <videoteca>
     <nombre>Videoteca 1</nombre>
     <ubicacion>Alcobendas</ubicacion>
-    <fecha_actualizacion>01/01/2020</fecha_actualizacion>
+    <fechaActualizacion>01/01/2020</fechaActualizacion>
     <peliculas>
         <pelicula agno = "1984" duracion ="108">
             <titulo>Terminator</titulo>

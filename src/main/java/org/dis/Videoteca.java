@@ -1,29 +1,30 @@
 package org.dis;
 
+import java.util.Date;
 import java.util.List;
 
 public class Videoteca {
 
     private String nombre;
     private String ubicacion;
-    private Peliculas peliculas;
-    private int fecha;
+    private List<Pelicula> peliculas;
+    private String fechaActualizacion;
 
 
-    public Videoteca(String nombre, String ubicacion, Peliculas peliculas, int fecha) {
+    public Videoteca(String nombre, String ubicacion, List<Pelicula> peliculas, String fechaActualizacion) {
         this.nombre = nombre;
         this.ubicacion = ubicacion;
         this.peliculas = peliculas;
-        this.fecha = fecha;
+        this.fechaActualizacion = fechaActualizacion;
     }
 
-    public Peliculas getPeliculas() {
+    public List<Pelicula> getPeliculas() {
         return peliculas;
     }
 
     @Override
     public String toString() {
-        return "Nombre=" + nombre + ", Ubicacion=" + ubicacion + ", Peliculas=" + peliculas + ", fecha=" + fecha;
+        return "Nombre=" + nombre + ", Ubicacion=" + ubicacion + ", Peliculas=" + peliculas + ", fechaActualizacion=" + fechaActualizacion;
     }
 
     public String getNombre() {

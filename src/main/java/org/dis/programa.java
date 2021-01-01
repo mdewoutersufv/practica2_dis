@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class programa {
-    public static final String DOCUMENTO_XML = "data.xml";
-    public static final String DOCUMENTO_JSON = "data.json";
+    public static final String DOCUMENTO_XML = "C:\\Users\\Miguel\\IdeaProjects\\practica2_dis\\src\\main\\java\\org\\dis\\data.xml";
+    public static final String DOCUMENTO_JSON = "C:\\Users\\Miguel\\IdeaProjects\\practica2_dis\\src\\main\\java\\org\\dis\\data.json";
 
     public static void mostrarActores(String titulo,Videoteca[] videotecas){
         for(Videoteca videoteca : videotecas) {
