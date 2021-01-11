@@ -48,7 +48,17 @@ public class MainView extends VerticalLayout {
         add(filterText,grid,detalles);
         updateList(filterText);
 
-
+        grid.asSingleSelect().addValueChangeListener(e -> {
+            Pelicula p = e.getValue();
+            tituloValue.setText(p.getTitulo());
+            sinopsisValue.setText(p.getSinopsis());
+            generoValue.setText(p.getGenero());
+            enlaceValue.setText(p.getEnlace());
+            agnoValue.setText(Integer.toString(p.getAgno()));
+            duracionValue.setText(Integer.toString(p.getDuracion()));
+            List<Actor> reparto = p.getReparto();
+            detalles.open();
+        });
 
     }
 
