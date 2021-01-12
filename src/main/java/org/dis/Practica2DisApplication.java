@@ -37,9 +37,9 @@ public class Practica2DisApplication {
 			list3.add(actor);
 			actorRepository.save(actor);
 			actorRepository.save(actor2);
-			peliculaRepository.save(new Pelicula("a","a","a","a",0,0,list1));
-			peliculaRepository.save(new Pelicula("b","b","a","a",0,0,list2));
-			peliculaRepository.save(new Pelicula("c", "c", "a", "a", 0, 0, list3));
+			peliculaRepository.save(new Pelicula("a","a","a","a",0,1,list1));
+			peliculaRepository.save(new Pelicula("b","b","b","b",2,3,list2));
+			peliculaRepository.save(new Pelicula("c", "c", "c", "v", 4, 5, list3));
 
 
 			// fetch all Peliculas

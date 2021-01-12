@@ -24,7 +24,7 @@ public class Videoteca {
 
     @Override
     public String toString() {
-        return "Nombre=" + nombre + ", Ubicacion=" + ubicacion + ", Peliculas=" + peliculas + ", fechaActualizacion=" + fechaActualizacion;
+        return "Nombre=" + nombre + ", Ubicacion=" + ubicacion + ", Peliculas="  + ", fechaActualizacion=" + fechaActualizacion;
     }
 
     public String getNombre() {

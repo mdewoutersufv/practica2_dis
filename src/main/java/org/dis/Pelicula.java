@@ -1,6 +1,8 @@
 package org.dis;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -117,4 +119,10 @@ public class Pelicula {
         this.peliculaId = peliculaId;
     }
 
+    public void aniadirActor(Actor actor){
+        reparto.add(actor);
+    }
+    public void eliminarActor(Actor actor){
+        reparto.remove(actor);
+    }
 }

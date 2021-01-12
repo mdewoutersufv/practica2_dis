@@ -19,10 +19,12 @@ public class MainView extends VerticalLayout {
     private Grid<Pelicula> grid = new Grid<>(Pelicula.class);
     private final PeliculaRepository repo;
     private final ActorRepository actorRepo;
+    private final PeliculaEditor editor;
 
     private TextField filterText = new TextField();
     private Dialog detalles =  new Dialog();
     private VerticalLayout detallesLayout = new VerticalLayout();
+    private Button editarButton= new Button("Editar película");
     private HorizontalLayout detallesTitulo = new HorizontalLayout();
     private Text tituloValue = new Text("");
     private HorizontalLayout detallesSinopsis = new HorizontalLayout();
@@ -36,31 +38,48 @@ public class MainView extends VerticalLayout {
     private HorizontalLayout detallesDuracion = new HorizontalLayout();
     private Text duracionValue = new Text("");
 
-    public MainView(PeliculaRepository repo, ActorRepository actorRepo ) {
+    public MainView(PeliculaRepository repo, ActorRepository actorRepo, PeliculaEditor editor) {
         this.repo = repo;
         this.actorRepo = actorRepo;
+        this.editor = editor;
+        //this.editor = editor;
         addClassName("list-view");
         setSizeFull();
         configureFilter();
         configureGrid();
         configureDetalles();
 
-        add(filterText,grid,detalles);
+        add(filterText,grid,detalles,editor);
         updateList(filterText);
-
         grid.asSingleSelect().addValueChangeListener(e -> {
-            Pelicula p = e.getValue();
-            tituloValue.setText(p.getTitulo());
-            sinopsisValue.setText(p.getSinopsis());
-            generoValue.setText(p.getGenero());
-            enlaceValue.setText(p.getEnlace());
-            agnoValue.setText(Integer.toString(p.getAgno()));
-            duracionValue.setText(Integer.toString(p.getDuracion()));
-            List<Actor> reparto = p.getReparto();
-            detalles.open();
+            if(e.getValue() != null)
+            {
+                Pelicula p = e.getValue();
+                tituloValue.setText(p.getTitulo());
+                sinopsisValue.setText(p.getSinopsis());
+                generoValue.setText(p.getGenero());
+                enlaceValue.setText(p.getEnlace());
+                agnoValue.setText(Integer.toString(p.getAgno()));
+                duracionValue.setText(Integer.toString(p.getDuracion()));
+                List<Actor> reparto = p.getReparto();
+                //p.eliminarActor(reparto.get(0));
+                //repo.save(p);
+                //detalles.add(reparto.get(0).getNombre());
+                editarButton.addClickListener(ev -> {
+                    detalles.close();
+                    editor.editPelicula(p);
+                });
+                detalles.open();
+            }
         });
 
+        editor.setChangeHandler(() -> {
+            editor.setVisible(false);
+            updateList(filterText);
+
+        });
     }
+
 
     private void configureGrid() {
         grid.addClassName("pelicula-grid");
@@ -108,7 +127,9 @@ public class MainView extends VerticalLayout {
         detalles.add(detallesLayout);
         detalles.add(new Button("Cerrar", event -> {
             detalles.close();
+            //grid; borrar el focus??
         }));
+        detalles.add(editarButton);
     }
 
 
