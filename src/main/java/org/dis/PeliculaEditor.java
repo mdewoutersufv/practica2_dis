@@ -51,9 +51,12 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
 
     /* Action buttons */
     // TODO why more code?
-    Button save = new Button("Save", VaadinIcon.CHECK.create());
-    Button cancel = new Button("Cancel");
-    Button delete = new Button("Delete", VaadinIcon.TRASH.create());
+    Button save = new Button("Guardar cambios", VaadinIcon.CHECK.create());
+    Button cancel = new Button("Cancelar edición");
+    Button delete = new Button("Eliminar película", VaadinIcon.TRASH.create());
+    Dialog editarReparto= new Dialog();
+    Button editarRepartoButton = new Button("Editar reparto",buttonClickEvent -> {editarReparto.open();});
+    VerticalLayout editarRepartoLayout = new VerticalLayout();
     HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
     Binder<Pelicula> binder = new Binder<>(Pelicula.class);
@@ -64,7 +67,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
         this.repository = repository;
         this.actorRepo = actorRepo;
 
-        add(titulo, sinopsis, genero, enlace, agno, duracion,reparto, actions);
+        add(titulo, sinopsis, genero, enlace, agno, duracion,reparto,editarReparto,editarRepartoButton, actions);
 
         // bind using naming convention
         binder.bindInstanceFields(this);
@@ -80,7 +83,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
         // wire action buttons to save, delete and reset
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editPelicula(pelicula));
+        cancel.addClickListener(e -> changeHandler.onChange());
         setVisible(false);
 
 
@@ -124,12 +127,59 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
 
         // Focus first name initially
         titulo.focus();
+        configureEditarReparto(pelicula);
 
     }
 
+    public void configureEditarReparto(Pelicula pelicula){
+        List<Actor> reparto = pelicula.getReparto();
+        TextField nombreField = new TextField("Nombre");
+        TextField enlaceField = new TextField("Enlace a la wikipedia");
 
+        Button aniadirActorButton = new Button("Añadir actor");
+        aniadirActorButton.addClickListener(e->{
+            if(!nombreField.isEmpty() && !enlaceField.isEmpty()){
+                String nombre = nombreField.getValue();
+                String enlace = enlaceField.getValue();
+                Actor a = new Actor(nombre, enlace);
+                actorRepo.save(a);
+                pelicula.aniadirActor(a);
+                repository.save(pelicula); // pero se modifica la peli????
+                aniadirActorALayout(reparto,reparto.size()-1);
+                nombreField.clear();
+                enlaceField.clear();
+            }
+        });
 
+        HorizontalLayout aniadirActorLayout = new HorizontalLayout();
+        Icon aniadirActorExclamacion = new Icon(VaadinIcon.EXCLAMATION_CIRCLE_O);
+        aniadirActorExclamacion.setColor("red");
+        Paragraph aniadirActorDisclaimer = new Paragraph("Esta accion no se puede deshacer");
+        aniadirActorDisclaimer.getElement().setAttribute("theme","error");
+        aniadirActorLayout.add(aniadirActorButton,aniadirActorExclamacion,aniadirActorDisclaimer);
+        editarRepartoLayout.removeAll();
+        editarRepartoLayout.add(new H3("Añadir actor:"),nombreField,enlaceField,aniadirActorLayout);
 
+        for(int i=0;i<reparto.size();i++){
+            aniadirActorALayout(reparto,i);
+        }
+        editarReparto.removeAll();
+        editarReparto.add(editarRepartoLayout);
+    }
+
+    public void aniadirActorALayout(List<Actor> reparto ,int pos){
+        H3 head = new H3("Actor " + (pos+1));
+        Actor a = reparto.get(pos);
+        Paragraph nombre= new Paragraph("Nombre: " + a.getNombre());
+        Paragraph enlace= new Paragraph("Enlace a la wikipedia: " + a.getEnlaceWikipedia());
+        Button b = new Button("Eliminar", VaadinIcon.TRASH.create());
+        b.addClickListener(e->{
+            b.getElement().setAttribute("theme","error");
+            b.setText("Eliminado");
+            pelicula.eliminarActor(a);
+        });
+        editarRepartoLayout.add(head,nombre,enlace,b);
+    }
 
     public void setChangeHandler(ChangeHandler h) {
         // ChangeHandler is notified when either save or delete

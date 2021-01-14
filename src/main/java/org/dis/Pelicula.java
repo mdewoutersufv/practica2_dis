@@ -1,5 +1,8 @@
 package org.dis;
 
+import org.hibernate.annotations.Type;
+import org.w3c.dom.Text;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,6 +15,7 @@ public class Pelicula {
     @GeneratedValue
     private Long peliculaId;
     private String titulo;
+    @Column(columnDefinition = "TEXT")
     private String sinopsis;
     private String genero;
     private String enlace;
