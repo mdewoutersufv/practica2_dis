@@ -65,4 +65,5 @@ public class Actor
     public void setPeliculas(List<Pelicula> peliculas) {
         this.peliculas = peliculas;
     }
+
 }

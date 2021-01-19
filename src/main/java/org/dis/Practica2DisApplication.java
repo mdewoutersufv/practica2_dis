@@ -1,5 +1,18 @@
 package org.dis;
 
+import com.google.gson.*;
+import org.dom4j.DocumentException;
+import org.json.*;
+import org.dom4j.io.SAXReader;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,12 +24,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.*;
 
 @SpringBootApplication
 public class Practica2DisApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(Practica2DisApplication.class);
+	public static final String DOCUMENTO_JSON = System.getProperty("user.dir") + "data.json";
+	public static Videoteca videoteca;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Practica2DisApplication.class);
@@ -26,7 +40,7 @@ public class Practica2DisApplication {
 	public CommandLineRunner loadData(PeliculaRepository peliculaRepository, ActorRepository actorRepository) {
 		return (args) -> {
 			// save Peliculas
-			Actor actor = new Actor("Jhon Cena","https://es.wikipedia.org/wiki/John_Cena");
+			/*Actor actor = new Actor("Jhon Cena","https://es.wikipedia.org/wiki/John_Cena");
 			Actor actor2 = new Actor("Danny DeVito","https://es.wikipedia.org/wiki/Danny_DeVito");
 			List<Actor> list1 = new ArrayList<Actor>();
 			list1.add(actor);
@@ -71,7 +85,71 @@ public class Practica2DisApplication {
 				log.info(bauer.toString());
 			}
 			log.info("");
+		};*/
+
+			cargarPeliculasJSON(peliculaRepository, actorRepository, DOCUMENTO_JSON);
+			log.info(new Gson().toJson(videoteca));
 		};
 	}
+
+	public static void cargarPeliculasJSON(PeliculaRepository repoPeli, ActorRepository repoActor, String docJson) throws IOException {
+		String doc_json1 = Files.readString(Paths.get(docJson), StandardCharsets.ISO_8859_1);
+
+		// Obtain Array
+		JsonObject json1 = JsonParser.parseString(doc_json1).getAsJsonObject();
+		//aquí convertimos el JSON a un objeto videoteca
+		Gson gson = new Gson();
+		JsonObject videotecaObj = json1.getAsJsonObject("videoteca");
+
+		String nombre = videotecaObj.get("nombre").getAsString();
+		String ubicacion = videotecaObj.get("ubicacion").getAsString();
+		String fechaActualizacion = videotecaObj.get("fechaActualizacion").getAsString();
+		List<Pelicula> peliculas = new ArrayList<Pelicula>();
+
+		JsonArray peliculasObj = videotecaObj.getAsJsonObject("peliculas").getAsJsonArray("pelicula");
+
+		for (JsonElement elem1 : peliculasObj) {
+			JsonObject peliculaObj = elem1.getAsJsonObject();
+			String titulo = peliculaObj.get("titulo").getAsString();
+			String sinopsis = peliculaObj.get("sinopsis").getAsString();
+			String genero = peliculaObj.get("genero").getAsString();
+			String enlace = peliculaObj.get("enlace").getAsString();
+			int agno = peliculaObj.get("agno").getAsInt();
+			int duracion = peliculaObj.get("duracion").getAsInt();
+			List<Actor> reparto = new ArrayList<Actor>();
+
+			JsonArray repartoObj = peliculaObj.getAsJsonObject("reparto").getAsJsonArray("actor");
+
+			for (JsonElement elem2 : repartoObj) {
+				JsonObject actorObj = elem2.getAsJsonObject();
+				String nombreActor = actorObj.get("nombre").getAsString();
+				String enlaceWikipedia = actorObj.get("enlaceWikipedia").getAsString();
+				Actor actor = new Actor(nombreActor, enlaceWikipedia);
+				reparto.add(actor);
+			}
+
+			Pelicula pelicula = new Pelicula(titulo, sinopsis, genero, enlace, agno, duracion, reparto);
+			peliculas.add(pelicula);
+		}
+
+		videoteca = new Videoteca(nombre, ubicacion, peliculas, fechaActualizacion);
+		System.out.println(videoteca);
+
+		repoPeli.deleteAll();
+		repoActor.deleteAll();
+
+		for(Pelicula pelicula : peliculas){
+			for(Actor actor : pelicula.getReparto())
+				repoActor.save(actor);
+			repoPeli.save(pelicula);
+		}
+	}
+
+	public static void guardarPeliculasJSON(String docJSON){
+		String json = new String("");
+
+		json += "\"videoteca\": {\"ubicacion\": ";
+		json += videoteca.getUbicacion();
+		}
 
 }

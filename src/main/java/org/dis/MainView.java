@@ -1,5 +1,6 @@
 package org.dis;
 
+import com.google.gson.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -12,6 +13,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @CssImport("../src/main/style.css")
@@ -54,9 +61,22 @@ public class MainView extends VerticalLayout {
         configureFilter();
         configureGrid();
         configureDetalles();
+        Button b1 = new Button("Load");
+        Button b2 = new Button("Save");
 
-        add(filterText,grid,detalles,editor);
+        add(filterText,grid,detalles,editor,b1,b2);
         updateList(filterText);
+
+        b1.addClickListener(e->{
+            try {
+                Practica2DisApplication.cargarPeliculasJSON(repo,actorRepo,Practica2DisApplication.DOCUMENTO_JSON);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+
+
+
         grid.asSingleSelect().addValueChangeListener(e -> {
             if(e.getValue() != null)
             {

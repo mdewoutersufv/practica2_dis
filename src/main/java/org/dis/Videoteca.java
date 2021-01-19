@@ -30,4 +30,12 @@ public class Videoteca {
     public String getNombre() {
         return nombre;
     }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public String getFechaActualizacion() {
+        return fechaActualizacion;
+    }
 }

@@ -129,4 +129,5 @@ public class Pelicula {
     public void eliminarActor(Actor actor){
         reparto.remove(actor);
     }
+
 }
