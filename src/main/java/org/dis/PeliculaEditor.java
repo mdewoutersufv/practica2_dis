@@ -21,13 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A simple example to introduce building forms. As your real application is probably much
- * more complicated than this example, you could re-use this form in multiple places. This
- * example component is only used in MainView.
- * In a real world application you'll most likely using a common super class for all your
- * forms - less code, better UX.
- */
 @SpringComponent
 @UIScope
 public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
@@ -138,16 +131,23 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
 
         Button aniadirActorButton = new Button("Añadir actor");
         aniadirActorButton.addClickListener(e->{
+            boolean existe = false;
             if(!nombreField.isEmpty() && !enlaceField.isEmpty()){
                 String nombre = nombreField.getValue();
-                String enlace = enlaceField.getValue();
-                Actor a = new Actor(nombre, enlace);
-                actorRepo.save(a);
-                pelicula.aniadirActor(a);
-                repository.save(pelicula); // pero se modifica la peli????
-                aniadirActorALayout(reparto,reparto.size()-1);
-                nombreField.clear();
-                enlaceField.clear();
+                for(Actor a : pelicula.getReparto()) {
+                    if (a.getNombre().equals(nombre))
+                        existe = true;
+                }
+                if(!existe) {
+                    String enlace = enlaceField.getValue();
+                    Actor a = new Actor(nombre, enlace);
+                    actorRepo.save(a);
+                    pelicula.aniadirActor(a);
+                    repository.save(pelicula);
+                    aniadirActorALayout(reparto, reparto.size() - 1);
+                    nombreField.clear();
+                    enlaceField.clear();
+                }
             }
         });
 

@@ -48,6 +48,8 @@ public class MainView extends VerticalLayout {
     private Paragraph duracionValue = new Paragraph("");
     private HorizontalLayout detallesActions = new HorizontalLayout();
     Dialog verReparto= new Dialog();
+    Button cargarButton = new Button("Cargar películas");
+    Button guardarButton = new Button("Guardar películas");
     Button verRepartoButton = new Button("Ver reparto",buttonClickEvent -> {verReparto.open();});
     VerticalLayout verRepartoLayout = new VerticalLayout();
 
@@ -56,34 +58,25 @@ public class MainView extends VerticalLayout {
         this.repo = repo;
         this.actorRepo = actorRepo;
         this.editor = editor;
+
         addClassName("list-view");
         setSizeFull();
         configureFilter();
         configureGrid();
         configureDetalles();
-        Button b1 = new Button("Cargar películas");
-        Button b2 = new Button("Guardar películas");
+        configureEditor();
+        configureGestionJSON();
 
-        add(filterText,grid,detalles,editor,b1,b2);
+        add(filterText,grid,detalles,editor,cargarButton,guardarButton);
         updateList(filterText);
-
-        b1.addClickListener(e->{
-            try {
-                Practica2DisApplication.cargarPeliculasJSON(repo,actorRepo,Practica2DisApplication.DOCUMENTO_JSON);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
-
-        b2.addClickListener(e->{
-            try {
-                Practica2DisApplication.guardarPeliculasJSON(repo,Practica2DisApplication.DOCUMENTO_JSON);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
+    }
 
 
+    private void configureGrid() {
+        grid.addClassName("pelicula-grid");
+        grid.setSizeFull();
+        grid.setColumns( "peliculaId","titulo", "enlace", "agno", "duracion");
+        grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(e -> {
             if(e.getValue() != null)
@@ -104,20 +97,6 @@ public class MainView extends VerticalLayout {
                 detalles.open();
             }
         });
-
-        editor.setChangeHandler(() -> {
-            editor.setVisible(false);
-            updateList(filterText);
-        });
-    }
-
-
-    private void configureGrid() {
-        grid.addClassName("pelicula-grid");
-        grid.setSizeFull();
-        grid.setColumns( "peliculaId","titulo", "enlace", "agno", "duracion");
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
     }
 
     private void updateList(TextField filterText) {
@@ -170,13 +149,12 @@ public class MainView extends VerticalLayout {
         detalles.add(detallesLayout);
         detallesActions.add(new Button("Cerrar", event -> {
             detalles.close();
-            //grid; borrar el focus??
         }));
         detallesActions.add(editarButton);
         detalles.add(detallesActions);
     }
 
-    public void configureVerActorLayout(List<Actor> reparto){
+    private void configureVerActorLayout(List<Actor> reparto){
         verRepartoLayout.removeAll();
         for(int i = 0; i<reparto.size(); i++) {
             H3 head = new H3("Actor " + (i + 1));
@@ -190,5 +168,30 @@ public class MainView extends VerticalLayout {
         verReparto.add(verRepartoLayout);
     }
 
+    private void configureEditor(){
+        editor.setChangeHandler(() -> {
+            editor.setVisible(false);
+            updateList(filterText);
+        });
+    }
+
+    private void configureGestionJSON(){
+        cargarButton.addClickListener(e->{
+            try {
+                Practica2DisApplication.cargarPeliculasJSON(repo,actorRepo,Practica2DisApplication.DOCUMENTO_JSON);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            updateList(filterText);
+        });
+
+        guardarButton.addClickListener(e->{
+            try {
+                Practica2DisApplication.guardarPeliculasJSON(repo,Practica2DisApplication.DOCUMENTO_JSON);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+    }
 
 }
