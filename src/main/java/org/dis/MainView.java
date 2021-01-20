@@ -15,10 +15,6 @@ import com.vaadin.flow.router.Route;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @CssImport("../src/main/style.css")
@@ -78,18 +74,22 @@ public class MainView extends VerticalLayout {
         grid.setColumns( "peliculaId","titulo", "enlace", "agno", "duracion");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
+        //Configuramos lo que ocurre al hacer clic en alguna película
         grid.asSingleSelect().addValueChangeListener(e -> {
             if(e.getValue() != null)
             {
                 Pelicula p = e.getValue();
+                //Sobreescribimos los valores de los párrafos que muestran los detalles de una película con los valores de la película seleccionada
                 tituloValue.setText(p.getTitulo());
                 sinopsisValue.setText(p.getSinopsis());
                 generoValue.setText(p.getGenero());
                 enlaceValue.setText(p.getEnlace());
                 agnoValue.setText(Integer.toString(p.getAgno()));
                 duracionValue.setText(Integer.toString(p.getDuracion()));
+                //Configuramos el layout de los detalles del reparto
                 List<Actor> reparto = p.getReparto();
                 configureVerActorLayout(reparto);
+                //Configuramos el botón para abrir el editor de películas
                 editarButton.addClickListener(ev -> {
                     detalles.close();
                     editor.editPelicula(p);
@@ -119,6 +119,7 @@ public class MainView extends VerticalLayout {
 
         detalles.setCloseOnOutsideClick(false);
         detalles.setCloseOnEsc(false);
+        //Asociamos a cada atributo de la lase Pelicula un layout horizontal, al que añadimos el nombre del atibuto y su valor
         Paragraph tituloParagraph = new Paragraph("Titulo: ");
         tituloParagraph.setClassName("componente");
         detallesTitulo.add(tituloParagraph);
@@ -144,8 +145,10 @@ public class MainView extends VerticalLayout {
         detallesDuracion.add(duracionParagraph);
         detallesDuracion.add(duracionValue);
 
+        //Añadimos los layout horizontales previamnete definidos al layout de la ventana de detalles
         detallesLayout.add(detallesTitulo,detallesSinopsis,detallesGenero,detallesEnlace,detallesAgno,detallesDuracion,verRepartoButton);
 
+        //Añadimos una función que haga que, al hacer clic en el botón "Cerrar" se cierre la ventana de detalles
         detalles.add(detallesLayout);
         detallesActions.add(new Button("Cerrar", event -> {
             detalles.close();
@@ -156,6 +159,7 @@ public class MainView extends VerticalLayout {
 
     private void configureVerActorLayout(List<Actor> reparto){
         verRepartoLayout.removeAll();
+        //Añadimos a layout que permite ver un reparto los detalles de cada uno de sus actores
         for(int i = 0; i<reparto.size(); i++) {
             H3 head = new H3("Actor " + (i + 1));
             Actor a = reparto.get(i);
@@ -176,6 +180,7 @@ public class MainView extends VerticalLayout {
     }
 
     private void configureGestionJSON(){
+        //Añadimos una función que haga que, al hacer clic en el botón "Cargarm películas" se carguen las películas desde un archivo JSON
         cargarButton.addClickListener(e->{
             try {
                 Practica2DisApplication.cargarPeliculasJSON(repo,actorRepo,Practica2DisApplication.DOCUMENTO_JSON);
@@ -185,6 +190,7 @@ public class MainView extends VerticalLayout {
             updateList(filterText);
         });
 
+        //Añadimos una función que haga que, al hacer clic en el botón "guardar películas" se guarden las películas desde un archivo JSON
         guardarButton.addClickListener(e->{
             try {
                 Practica2DisApplication.guardarPeliculasJSON(repo,Practica2DisApplication.DOCUMENTO_JSON);

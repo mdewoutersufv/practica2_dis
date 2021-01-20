@@ -35,6 +35,7 @@ public class Practica2DisApplication {
 	@Bean
 	public CommandLineRunner loadData(PeliculaRepository peliculaRepository, ActorRepository actorRepository) {
 		return (args) -> {
+			//Cargamos las películas por defecto
 			cargarPeliculasJSON(peliculaRepository, actorRepository, INICIAL_JSON);
 		};
 	}
@@ -82,7 +83,7 @@ public class Practica2DisApplication {
 			peliculas.add(pelicula);
 		}
 
-		//Creamos la videoteca a aprtir de todos los datos extraídos del json
+		//Creamos la videoteca a partir de todos los datos extraídos del json
 		videoteca = new Videoteca(nombre, ubicacion, peliculas, fechaActualizacion);
 
 		//Vacíamos la base de datos, para luego sobreescibir la lista de película y la de actores con lo que hemos leído del json

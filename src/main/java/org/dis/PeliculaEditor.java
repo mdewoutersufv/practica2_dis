@@ -28,9 +28,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
    private final PeliculaRepository repository;
    private final ActorRepository actorRepo;
 
-    /**
-     * The currently edited pelicula
-     */
+
     private Pelicula pelicula;
 
     /* Fields to edit properties in Pelicula entity */
@@ -43,7 +41,6 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
     Paragraph reparto = new Paragraph("Reparto");
 
     /* Action buttons */
-    // TODO why more code?
     Button save = new Button("Guardar cambios", VaadinIcon.CHECK.create());
     Button cancel = new Button("Cancelar edición");
     Button delete = new Button("Eliminar película", VaadinIcon.TRASH.create());
@@ -101,15 +98,9 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
             setVisible(false);
             return;
         }
-        final boolean persisted = c.getPeliculaId() != null;
-        if (persisted) {
-            // Find fresh entity for editing
-            pelicula = repository.findById(c.getPeliculaId()).get();
-        }
         else {
             pelicula = c;
         }
-        cancel.setVisible(persisted);
 
         // Bind pelicula properties to similarly named fields
         // Could also use annotation or "manual binding" or programmatically
@@ -118,7 +109,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
 
         setVisible(true);
 
-        // Focus first name initially
+        // Pone el foco en el título
         titulo.focus();
         configureEditarReparto(pelicula);
 
@@ -143,7 +134,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
                     Actor a = new Actor(nombre, enlace);
                     actorRepo.save(a);
                     pelicula.aniadirActor(a);
-                    repository.save(pelicula);
+                    //repository.save(pelicula);
                     aniadirActorALayout(reparto, reparto.size() - 1);
                     nombreField.clear();
                     enlaceField.clear();
@@ -152,11 +143,7 @@ public class PeliculaEditor extends VerticalLayout implements KeyNotifier {
         });
 
         HorizontalLayout aniadirActorLayout = new HorizontalLayout();
-        Icon aniadirActorExclamacion = new Icon(VaadinIcon.EXCLAMATION_CIRCLE_O);
-        aniadirActorExclamacion.setColor("red");
-        Paragraph aniadirActorDisclaimer = new Paragraph("Esta accion no se puede deshacer");
-        aniadirActorDisclaimer.getElement().setAttribute("theme","error");
-        aniadirActorLayout.add(aniadirActorButton,aniadirActorExclamacion,aniadirActorDisclaimer);
+        aniadirActorLayout.add(aniadirActorButton);
         editarRepartoLayout.removeAll();
         editarRepartoLayout.add(new H3("Añadir actor:"),nombreField,enlaceField,aniadirActorLayout);
 
