@@ -61,8 +61,8 @@ public class MainView extends VerticalLayout {
         configureFilter();
         configureGrid();
         configureDetalles();
-        Button b1 = new Button("Load");
-        Button b2 = new Button("Save");
+        Button b1 = new Button("Cargar películas");
+        Button b2 = new Button("Guardar películas");
 
         add(filterText,grid,detalles,editor,b1,b2);
         updateList(filterText);
@@ -70,6 +70,14 @@ public class MainView extends VerticalLayout {
         b1.addClickListener(e->{
             try {
                 Practica2DisApplication.cargarPeliculasJSON(repo,actorRepo,Practica2DisApplication.DOCUMENTO_JSON);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+
+        b2.addClickListener(e->{
+            try {
+                Practica2DisApplication.guardarPeliculasJSON(repo,Practica2DisApplication.DOCUMENTO_JSON);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

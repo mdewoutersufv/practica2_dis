@@ -2,7 +2,6 @@ package org.dis;
 
 import com.google.gson.*;
 import org.dom4j.DocumentException;
-import org.json.*;
 import org.dom4j.io.SAXReader;
 
 import java.io.BufferedReader;
@@ -13,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -29,7 +30,8 @@ import org.springframework.context.annotation.Bean;
 public class Practica2DisApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(Practica2DisApplication.class);
-	public static final String DOCUMENTO_JSON = System.getProperty("user.dir") + "data.json";
+	public static final String DOCUMENTO_JSON = System.getProperty("user.dir") + "/src/main/java/org/dis/dataN.json";
+	//public static final String DOCUMENTO_JSON = "C:/Users/Miguel/IdeaProjects/practica2_dis_faker/src/main/java/org/dis/data.json";
 	public static Videoteca videoteca;
 
 	public static void main(String[] args) {
@@ -89,13 +91,14 @@ public class Practica2DisApplication {
 
 			cargarPeliculasJSON(peliculaRepository, actorRepository, DOCUMENTO_JSON);
 			log.info(new Gson().toJson(videoteca));
+			guardarPeliculasJSON(peliculaRepository,System.getProperty("user.dir") + "/src/main/java/org/dis/dataN.json");
 		};
 	}
 
 	public static void cargarPeliculasJSON(PeliculaRepository repoPeli, ActorRepository repoActor, String docJson) throws IOException {
 		String doc_json1 = Files.readString(Paths.get(docJson), StandardCharsets.ISO_8859_1);
-
 		// Obtain Array
+
 		JsonObject json1 = JsonParser.parseString(doc_json1).getAsJsonObject();
 		//aquí convertimos el JSON a un objeto videoteca
 		Gson gson = new Gson();
@@ -145,11 +148,48 @@ public class Practica2DisApplication {
 		}
 	}
 
-	public static void guardarPeliculasJSON(String docJSON){
+	public static void guardarPeliculasJSON(PeliculaRepository repoPeli, String docJSON) throws IOException {
 		String json = new String("");
 
-		json += "\"videoteca\": {\"ubicacion\": ";
+		json += "{\"videoteca\":{\"ubicacion\":";
 		json += videoteca.getUbicacion();
+
+		json += ",\"peliculas\":{\"pelicula\":[";
+		for(Pelicula p : repoPeli.findAll()){
+			json += "{\"genero\":\"";
+			json += p.getGenero() + "\",";
+			json += "\"duracion\":";
+			json += p.getDuracion() + ",";
+			json += "\"titulo\":\"";
+			json += p.getTitulo() + "\",";
+			json += "\"agno\":";
+			json += p.getAgno() + ",";
+			json += "\"enlace\":\"";
+			json += p.getEnlace() + "\",";
+
+			json += "\"reparto\":{\"actor\":[";
+			for(Actor a : p.getReparto()){
+				json += "{\"enlaceWikipedia\":\"";
+				json += a.getEnlaceWikipedia()+ "\",";
+				json += "\"nombre\":\"";
+				json += a.getNombre() + "\"},";
+			}
+
+			json = json.substring(0, json.length() - 1);
+			json += "]},\"sinopsis\":\"";
+			json += p.getSinopsis() + "\"},";
 		}
+		json = json.substring(0, json.length() - 1);
+		json += "]},";
+		json += "\"fechaActualizacion\":\"";
+		json += videoteca.getFechaActualizacion() + "\",";
+		json += "\"nombre\":\"";
+		json += videoteca.getNombre();
+		json += "\"}}";
+		log.info(json);
+		JSONObject jsonObject = new JSONObject(json);
+		String jsonPrettyPrintString = jsonObject.toString(4);
+		Files.writeString(Paths.get(docJSON), jsonPrettyPrintString, StandardCharsets.ISO_8859_1);
+	}
 
 }
